@@ -59,3 +59,5 @@ A keyframe may contains a "force" flag. Forced keyframes appear when server have
 - OZView inspiration from [Summer Wars](http://menome.in.th/anime/summerwars)
 - Code portions from [project menome](http://menome.in.th) and twitteroauth.php
 - Sora push server (and its spinoff the menome stream server) is developed under National Software Competition 2012 program under funding from NECTEC. NECTEC does not supports the usage of Sora or streaming.
+- The keyframe approach is inspired from [Synchtube](http://synchtube.com).
+- Anime streaming is inspired from [/r/clannaddiscussion](http://www.reddit.com/r/clannaddiscussion).
