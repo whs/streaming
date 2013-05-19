@@ -1,39 +1,80 @@
-# awkwin's Streamer
+# awkwin's Streamer 2.0
 
 This is streamer used to stream anime on [madoka.whs.in.th](http://madoka.whs.in.th/streaming/). It supports any video URL (even that hosted on other origin server) and Flash Live Streaming server (requires additional hackery)
 
-This is a product of quick 'n dirty hack in two days. Don't expect much from it.
+This is a product of quick 'n dirty hack in two days plus few other patches. Don't expect much from it.
 
 ## Dependencies
 
 1. A PHP capable server (no database is required)
 2. PHP `curl` module
 3. PHP must allow `file_get_contents` to read from remote URL. (Actually not required, but need some more hackery)
-4. menome-compatible socket.io server. [Sora push server](https://github.com/whs/Sora/blob/master/pushserver.js) should be working, but haven't been tested. The Sora push server requires node.js, express and socket.io.
+4. [nginx-push-stream-module](https://github.com/wandenberg/nginx-push-stream-module)
 
 ## Installation
 
-1. Define your authenticator at `auth.php`, or use the provided [menome](http://menome.in.th) sign in. The following steps is to setup the menome sign in.
+### nginx setup
+
+In the same vhost that host the PHP pages, set
+
+~~~~~~~
+location /privpub/master {
+	push_stream_publisher;
+	set $push_stream_channel_id             animestream_master;
+	push_stream_store_messages on;
+}
+location /privpub/chat {
+	push_stream_publisher;
+	set $push_stream_channel_id             animestream_chat;
+}
+location /pub/online {
+	push_stream_publisher;
+	set $push_stream_channel_id             animestream_online;
+}
+location ~ /sub/(.*) {
+	push_stream_subscriber;
+	set $push_stream_channels_path              $1;
+	push_stream_message_template                "{\"id\":~id~,\"channel\":\"~channel~\",\"text\":~text~}";
+	push_stream_ping_message_interval           10s;
+}
+location ~ /ev/(.*) {
+	push_stream_subscriber;
+	push_stream_eventsource_support on;
+	set $push_stream_channels_path              $1;
+	push_stream_message_template                "{\"id\":~id~,\"channel\":\"~channel~\",\"text\":~text~}";
+	push_stream_ping_message_interval           10s;
+}
+location ~ /ws/(.*) {
+	push_stream_websocket;
+	set $push_stream_channels_path              $1;
+	push_stream_message_template                "{\"id\":~id~,\"channel\":\"~channel~\",\"text\":~text~}";
+	push_stream_ping_message_interval           10s;
+}
+~~~~~~~
+
+### App setup
+
+1. Write your authenticator at `auth.php`, or use the provided [menome](http://menome.in.th) sign in. The following steps is to setup the menome sign in.
 2. Register for an API key at [menome Security Center](http://menome.in.th/user/@security#api). Enter `http://yoururl/path/to/streaming/auth.php` as the redirect URL. Use "Confidential client".
 3. Edit config.php. Specify your given `API_KEY` and `API_SECRET`
-4. Specify your `CHAT_SERVER` and `CHAT_SECRET` (chat server must be URL accessible from the internet and the web server, chat secret must be the same as the push server)
-5. Test it out. Make sure the push server is running and accessible from the internet
+4. Test it out. Make sure the push server is running and accessible from the internet
 
 ## Hosting stream
 
 1. Go to `http://yoururl/path/to/streaming/?master=1`. If required, log in with menome and retry the URL.
-2. You'll see 3 buttons on top right, Open Video, Open Stream and Set Announce.
+2. You'll see 4 buttons on top right, Open file, Open YouTube, Open stream and Set Announce.
 
-- Open Video is to open video from arbitary URL. The video must be supported by client browsers' HTML5 video. MP4 usually works fine.
-- Open Stream is to use the code in the script tag. The default is to receive stream from http://stream.whs.in.th/live/anime. This must be changed in code, not in run-time.
+- Open file is to open video from arbitary URL. The video must be supported by client browsers' HTML5 video. MP4 usually works fine.
+- Open YouTube is to open YouTube video. This plugin is quite buggy at this time.
+- Open stream is to use the code in the script tag. The default is to receive stream from http://stream.whs.in.th/live/anime. This must be changed in code, not in run-time.
 - Set Announce is to set chat's pinned message.
 
 ## Notes
 
-- No master authentication is performed. Don't attempt to use multiple masters
-- For the file player, if the master lags everyone lags. If a client lags, it skip.
-- If you pause the file player, the client will loop.
-- If you seek the file player, the client seeks.
+- No master authentication is performed. Do not attempt to use multiple masters.
+- If the master lags everyone loop. If a client lags, it skip.
+- If you pause the file player, clients will loop.
+- If you seek the file player, clients seek.
 - Client can click at the lag meter below the chat bar to seek to the current keyframe time. (Needs to wait until next keyframe arrived)
 
 ## Behind the scene
@@ -58,6 +99,5 @@ A keyframe may contains a "force" flag. Forced keyframes appear when server have
 - Additional Nicochat testing from @zennnzonbolt @nonene_desu @WolfKungz
 - OZView inspiration from [Summer Wars](http://menome.in.th/anime/summerwars)
 - Code portions from [project menome](http://menome.in.th) and twitteroauth.php
-- Sora push server (and its spinoff the menome stream server) is developed under National Software Competition 2012 program under funding from NECTEC. NECTEC does not supports the usage of Sora or streaming.
 - The keyframe approach is inspired from [Synchtube](http://synchtube.com).
 - Anime streaming is inspired from [/r/clannaddiscussion](http://www.reddit.com/r/clannaddiscussion).

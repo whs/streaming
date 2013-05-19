@@ -1,22 +1,17 @@
 <?php
 session_start();
-define("API_HOST", "http://api.menome.in.th/");
+define("API_HOST", "https://api.menome.in.th/");
 define("API_KEY", "");
 define("API_SECRET", "");
 
-define("CHAT_SERVER", "http://localhost:8036/");
-define("CHAT_SECRET", "soraserver");
+$chatserver = $_SERVER['SERVER_NAME'];
+define("CHAT_MASTER", "http://".$chatserver."/privpub/master");
+define("CHAT_CHAT", "http://".$chatserver."/privpub/chat");
+define("CHAT_ONLINE", "http://".$chatserver."/pub/online");
 
 
-function ws_push($room, $type, $data=array()){
-	$url = CHAT_SERVER.$room;
-	$reqData = array(
-		"key" => CHAT_SECRET,
-		"data" => json_encode($data),
-		"type" => $type
-	);
-	$url .= "?" . http_build_query($reqData);
-	return file_get_contents($url);
+function ws_push($room, $data=array()){
+	return http($room, "POST", json_encode($data));
 }
 
 /**
@@ -25,7 +20,7 @@ function ws_push($room, $type, $data=array()){
  *
  * @return API results
  */
-function http($url, $method="GET", $postfields = NULL, $agent="whsStreaming/1.0") {
+function http($url, $method="GET", $postfields = NULL, $agent="animestream/1.1") {
 	$ci = curl_init();
 	/* Curl settings */
 	curl_setopt($ci, CURLOPT_USERAGENT, $agent);

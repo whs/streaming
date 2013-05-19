@@ -16,7 +16,8 @@ $user = $_SESSION['user'];
 	<meta charset="UTF-8">
 	<title>Streaming</title>
 	<link rel="stylesheet" href="normalize.css">
-	<script src="<?=CHAT_SERVER?>socket.io/socket.io.js"></script>
+	<script src="PushStream.min.js"></script>
+	<script src="//www.youtube.com/iframe_api"></script>
 	<style>
 body{
 	background: black;
@@ -187,6 +188,7 @@ video{
 <?php if($master): ?>
 <div id="control">
 	<button data-act="file">Open file</button>
+	<button data-act="youtube">Open YouTube</button>
 	<button data-act="stream">Open stream</button>
 	<button data-act="announce">Set announce</button>
 </div>
@@ -212,41 +214,142 @@ video{
 <div id="oz">
 </div>
 <script id="streamplayer" type="text/html">
-<object width="852" height="480"> <param name="movie" value="http://madoka.whs.in.th/FlashMediaPlayback_101.swf"></param><param name="flashvars" value="src=http://stream.whs.in.th/live/anime/manifest.f4m?session=<?=time()?>&amp;controlBarMode=floating&amp;playButtonOverlay=false&amp;autoPlay=true"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://fpdownload.adobe.com/strobe/FlashMediaPlayback_101.swf" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="853" height="480" flashvars="src=http%3A%2F%2Fstream.whs.in.th%2F&amp;controlBarMode=floating&amp;playButtonOverlay=false&amp;autoPlay=true"></embed></object>
+<object width="852" height="480"> <param name="movie" value="http://madoka.whs.in.th/FlashMediaPlayback_101.swf"></param><param name="flashvars" value="src=http://stream.whs.in.th/live/anime/manifest.f4m?session=<?=time()?>&amp;controlBarMode=none&amp;playButtonOverlay=false&amp;autoPlay=true"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://fpdownload.adobe.com/strobe/FlashMediaPlayback_101.swf" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="853" height="480" flashvars="src=http%3A%2F%2Fstream.whs.in.th%2F&amp;controlBarMode=floating&amp;playButtonOverlay=false&amp;autoPlay=true"></embed></object>
 </script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
 <script>
-var socket = io.connect('<?=CHAT_SERVER?>streaming/chat');
+var socket = new PushStream({
+	host: window.location.hostname,
+	port: window.location.port,
+	modes: "websocket|eventsource|stream"
+});
+//PushStream.LOG_LEVEL = "debug";
+socket.addChannel('animestream_master', {backtrack: 1});
+socket.addChannel('animestream_chat');
+socket.addChannel('animestream_online');
+socket.connect();
 var loadTimeout, reload=false, lp = new Date().getTime();
-var source = {type: null};
+var source = {type: null}, lastPacket = {};
 var nicoSlot = {0:0, 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0};
 var nicoOn = true, ozOn = false;
-socket.on('chat', function(data){
+var ytplayer = null;
+var user = <?php print json_encode(array(
+	"id" => $user->id,
+	"name" => $user->name,
+	"avatar" => $user->avatar
+)); ?>;
+
+// yt apis
+function onPlayerStateChange(e){
+	<?php if(!$master): ?>
+	e.target.seekTo(parseFloat(lastPacket.time), true);
+	<?php else: ?>
+	sync();
+	<?php endif; ?>
+}
+
+function getTime(){
+	if($("#player video").length == 1){
+		return $("#player video").get(0).currentTime + 0.5
+	}else if(ytplayer){
+		try{
+			return ytplayer.getCurrentTime();
+		}catch(e){
+			return 0;
+		}
+	}
+}
+
+function getBuffering(){
+	if(ytplayer){
+		try{
+			return ytplayer.getVideoLoadedFraction();
+		}catch(e){
+			return 0;
+		}
+	}else if($("#player video").length == 1){
+		var obj = $("#player video").get(0);
+		try{
+			return obj.buffered.end(0)/obj.duration;
+		}catch(e){return 0;}
+	}
+}
+
+function getPause(){
+	if(ytplayer){
+		try{
+			return ytplayer.getPlayerState() != 1
+		}catch(e){
+			return true;
+		}
+	}else if($("#player video").length == 1){
+		return $("#player video").get(0).paused;
+	}
+}
+
+function setPause(v){
+	if(ytplayer){
+		try{
+			if(v){
+				return ytplayer.pauseVideo();
+			}else{
+				return ytplayer.playVideo();
+			}
+		}catch(e){}
+	}else if($("#player video").length == 1){
+		var obj = $("#player video").get(0);
+		if(v){
+			return obj.pause();
+		}else{
+			return obj.play();
+		}
+	}
+}
+
+function nicoPush(message){
+	var nc = $("<span class='nico'>").text(message);
+	var nSlot = 0, nCount = 99999999;
+	$.each(nicoSlot, function(k,v){
+		v = v - new Date().getTime();
+		if(v<nCount){
+			nSlot = k;
+			nCount = v;
+		}
+	});
+	nc.css("top", nSlot * 30).css("font-size", Math.floor(Math.random() * 6) + 20);
+	nc.appendTo("#nicochat");
+	var width = nc.width() + 10;
+	nicoSlot[nSlot] = new Date().getTime() + 4000 + (width * 2);
+	nc.animate({left: width*-1}, 4000 + (width * 2), function(){
+		nicoSlot[nSlot] = 0;
+	});
+}
+
+function chat_packet(data){
 	var ele = $("<li><a class='user' target='_blank'></a><div class='body'></div></li>");
 	ele.find(".user").text(" "+data.user.name+":");
 	$("<img>").attr("src", data.user.avatar).prependTo(ele.find(".user"));
-	ele.find(".body").text(data.message+" ");
+	ele.find(".body").text(data.message.replace(/\*([0-9]+)$/, "")+" ");
 	$("<span class='meta'></span>").text(new Date(data.time * 1000).toLocaleTimeString()).appendTo(ele.find(".body"));
 	ele.insertAfter("#announce");
 
 	// nicochat
 	if(nicoOn){
-		var nc = $("<span class='nico'>").text(data.message);
-		var nSlot = 0, nCount = 99999999;
-		$.each(nicoSlot, function(k,v){
-			v = v - new Date().getTime();
-			if(v<nCount){
-				nSlot = k;
-				nCount = v;
+		if(data.message.match(/\*([0-9]+)$/)){
+			var count = data.message.match(/\*([0-9]+)$/);
+			count = Math.max(1, Math.min(parseInt(count[1]), 5));
+			var message = data.message.replace(/\*([0-9]+)$/, "");
+			var pusher = function(){
+				nicoPush(message);
+				count--;
+				if(count > 0){
+					setTimeout(pusher, Math.random()*500);
+				}
 			}
-		});
-		nc.css("top", nSlot * 30).css("font-size", Math.floor(Math.random() * 6) + 20);
-		nc.appendTo("#nicochat");
-		var width = nc.width() + 10;
-		nicoSlot[nSlot] = new Date().getTime() + 4000 + (width * 2);
-		nc.animate({left: width*-1}, 4000 + (width * 2), function(){
-			nicoSlot[nSlot] = 0;
-		});
+			pusher();
+		}else{
+			nicoPush(data.message);
+		}
 	}
 
 	// ozview
@@ -258,38 +361,46 @@ socket.on('chat', function(data){
 			oz.css("-webkit-transform", "rotateY(90deg)");
 		}, 2000 + (oz.width() * 2));
 	}
-});
-socket.on("online", function(data){
+}
+function online_packet(data){
 	var ele = $("#onlineuser .user_"+data.user.id);
 	if(ele.length == 1){
 		ele.data("update", new Date().getTime());
+		<?php if($master): ?>
+		var lag = " ("+Math.floor(parseFloat(data.user.buffer)*100)+"%)";
+		ele.find(".user span").text(" "+data.user.name+lag);
+		<?php endif; ?>
 	}else{
-		ele = $("<li><a class='user' target='_blank'></a></li>");
-		ele.find(".user").text(" "+data.user.name);
+		ele = $("<li><a class='user' target='_blank'><span></span></a></li>");
+		var lag = "";
+		<?php if($master): ?>
+		lag = " ("+Math.floor(parseFloat(data.user.buffer)*100)+"%)";
+		<?php endif; ?>
+		ele.find(".user span").text(" "+data.user.name+lag);
 		$("<img>").attr("src", data.user.avatar).prependTo(ele.find(".user"));
 		ele.addClass("user_" + data.user.id).data("update", new Date().getTime());
 		ele.appendTo("#onlineuser");
 	}
-});
-socket.on('connect', function (){
-	$("#player").text("Waiting for initial packet");
-	$.get("chat.php?act=online");
-	loadTimeout = setTimeout(function(){
-		$("#player").text("Initial packet is missing. Master is missing?");
-	}, 5000);
-});
-socket.on("sync", function(d){
+}
+function master_packet(d){
 	lp = new Date().getTime()
 	clearTimeout(loadTimeout);
-	//d.source = {"type": "file", "file": "clannad.mp4"};
-	if(d.force == "true" || source.type != d.source.type || source.file != d.source.file){
-		// switch
+	if(d.source.type != "youtube" && ytplayer){
+		ytplayer.destroy();
+		ytplayer = null;
+	}
+	if(d.force == true || source.type != d.source.type || source.file != d.source.file){
 		if(d.source.type == "file"){
 			$("#lagdata").show();
 			if($("#player video").attr("src") != d.source.file){
 				$("#player").html("<video autoplay<?php if($master): ?> controls<?php endif; ?>></video>");
-				$("#player video").attr("src", d.source.file).get(0).pause()
-				$("#player video").get(0).play();
+				$("#player video").attr("src", d.source.file).get(0).pause();
+				<?php if($master): ?>
+				$("#player video").on("pause,play", function(){
+					sync();
+				});
+				<?php endif; ?>
+				setPause(false);
 			}
 			try{
 				$("#player video").get(0).currentTime = parseFloat(d.time);
@@ -297,6 +408,23 @@ socket.on("sync", function(d){
 		}else if(d.source.type == "stream"){
 			$("#lagdata").hide();
 			$("#player").html($("#streamplayer").html());
+		}else if(d.source.type == "youtube"){
+			$("#lagdata").show();
+			ytplayer = new YT.Player('player', {
+				height: '480',
+				width: '852',
+				videoId: d.source.file,
+				events: {
+					'onStateChange': onPlayerStateChange
+				},
+				playerVars: {
+					autohide: '1',
+					autoplay: '1',
+					modestbranding: '1',
+					showinfo: '0',
+					rel: '0'
+				}
+        	});
 		}
 		source = d.source;
 	}
@@ -306,23 +434,58 @@ socket.on("sync", function(d){
 		$("#announce").text("").hide();
 	}
 	<?php if(!$master): ?>
-	if(source.type == "file"){
-		var lag = Math.floor(parseFloat(d.time) * 1000 - $("#player video").get(0).currentTime * 1000);
+	if(getPause() != (d.pause == true)){
+		setPause(d.pause);
+	}
+	if(source.type == "file" || source.type == "youtube"){
+		var lag = Math.floor(parseFloat(d.time) * 1000 - getTime() * 1000);
 		$("#lag").text(lag);
-		if(reload || Math.abs(lag) > 3000){
+		if(reload || Math.abs(lag) > 6000){
 			try{
-				$("#player video").get(0).currentTime = parseFloat(d.time);
+				if(source.type == "youtube"){
+					ytplayer.seekTo(parseFloat(d.time), true);
+				}else{
+					$("#player video").get(0).currentTime = parseFloat(d.time);
+				}
+				setPause(false);
 			}catch(e){}
 			reload = false;
 		}
 	}
 	<?php endif; ?>
-});
+	lastPacket = d;
+}
+
+socket.onmessage = function(text, id, channel){
+	channel = channel.replace(/^animestream_/, "");
+	if(["chat", "online", "master"].indexOf(channel) != -1){
+		window[channel+"_packet"](text);
+	}else{
+		console.error("Unknown packet type", channel);
+	}
+}
+socket.onopen = function(){
+	$("#player").text("Waiting for initial packet");
+	update_online();
+	loadTimeout = setTimeout(function(){
+		$("#player").text("Initial packet is missing. Master is missing?");
+	}, 5000);
+}
+function update_online(){
+	$.ajax({
+		type: "POST",
+		url: "<?=CHAT_ONLINE?>",
+		data: JSON.stringify({"user": user}),
+		contentType: "application/json"
+	});
+}
+
 setInterval(function(){
 	$("#lp").text(Math.max(0, (new Date().getTime() - lp) - 3000));
 }, 500);
 setInterval(function(){
-	$.get("chat.php?act=online&rnd="+(new Date().getTime()).toString());
+	user.buffer = getBuffering();
+	update_online();
 	$("#onlineuser li").each(function(){
 		if($(this).data("update") < new Date().getTime() - 6000){
 			$(this).remove();
@@ -333,14 +496,17 @@ setInterval(function(){
 /* master */
 var announce="", syncTimer;
 function sync(change){
-	$.post("chat.php", {
-		act: "sync",
-		data: {
+	$.ajax({
+		type: "POST",
+		url: "<?=CHAT_MASTER?>",
+		data: JSON.stringify({
 			source: source,
-			time: $("#player video").length == 1 ? $("#player video").get(0).currentTime + 0.5 : null,
+			time: getTime(),
 			force: !!change,
-			announce: announce
-		}
+			announce: announce,
+			pause: getPause()
+		}),
+		contentType: "application/json"
 	});
 }
 $("button[data-act=file]").click(function(){
@@ -359,6 +525,18 @@ $("button[data-act=stream]").click(function(){
 	source = {
 		type: "stream",
 		file: null
+	};
+	sync(true);
+	clearInterval(syncTimer);
+	syncTimer = setInterval(sync, 3000);
+	return false;
+});
+$("button[data-act=youtube]").click(function(){
+	var file = prompt("YouTube ID?", "");
+	if(!file) return false;
+	source = {
+		type: "youtube",
+		file: file
 	};
 	sync(true);
 	clearInterval(syncTimer);
@@ -400,7 +578,6 @@ $("input[name=chat]").keyup(function(e){
 	if(e.which == 13){
 		var self = this;
 		this.disabled = true;
-		//this.value = "FFFUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU".substr(0, Math.floor(Math.random()*40) + 10);
 		$.post("chat.php", {"text": this.value}, function(){
 			self.disabled = false;
 			self.value = "";
