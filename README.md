@@ -59,9 +59,8 @@ location ~ /ws/(.*) {
 
 ### App setup
 
-1. Write your authenticator at `auth.php`, or use the provided [menome](http://menome.in.th) sign in. The following steps is to setup the menome sign in.
-2. Register for an API key at [menome Security Center](http://menome.in.th/user/@security#api). Enter `http://yoururl/path/to/streaming/auth.php` as the redirect URL. Use "Confidential client".
-3. Edit config.php. Specify your given `API_KEY` and `API_SECRET`
+1. Register a [Facebook app](http://developers.facebook.com). Set app domain to link of your site.
+3. Edit config.php. Specify your given `FB_ID` and `FB_SECRET`. Optionally set `FB_REQUIRE_EVENT` to Facebook event id only allow users who have RSVP to that event to login.
 4. Test it out. Make sure the push server is running and accessible from the internet
 
 ## Hosting stream

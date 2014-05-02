@@ -410,21 +410,25 @@ function master_packet(d){
 			$("#player").html($("#streamplayer").html());
 		}else if(d.source.type == "youtube"){
 			$("#lagdata").show();
-			ytplayer = new YT.Player('player', {
-				height: '480',
-				width: '852',
-				videoId: d.source.file,
-				events: {
-					'onStateChange': onPlayerStateChange
-				},
-				playerVars: {
-					autohide: '1',
-					autoplay: '1',
-					modestbranding: '1',
-					showinfo: '0',
-					rel: '0'
-				}
-        	});
+			if(ytplayer){
+				ytplayer.loadVideoById(d.source.file, d.force ? 0 : d.time);
+			}else{
+				ytplayer = new YT.Player('player', {
+					height: '480',
+					width: '852',
+					videoId: d.source.file,
+					events: {
+						'onStateChange': onPlayerStateChange
+					},
+					playerVars: {
+						autohide: '1',
+						autoplay: '1',
+						modestbranding: '1',
+						showinfo: '0',
+						rel: '0'
+					}
+				});
+			}
 		}
 		source = d.source;
 	}
