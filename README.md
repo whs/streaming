@@ -8,8 +8,7 @@ This is a product of quick 'n dirty hack in two days plus few other patches. Don
 
 1. A PHP capable server (no database is required)
 2. PHP `curl` module
-3. PHP must allow `file_get_contents` to read from remote URL. (Actually not required, but need some more hackery)
-4. [nginx-push-stream-module](https://github.com/wandenberg/nginx-push-stream-module)
+3. [nginx-push-stream-module](https://github.com/wandenberg/nginx-push-stream-module)
 
 ## Installation
 
@@ -60,8 +59,9 @@ location ~ /ws/(.*) {
 ### App setup
 
 1. Register a [Facebook app](http://developers.facebook.com). Set app domain to link of your site.
-3. Edit config.php. Specify your given `FB_ID` and `FB_SECRET`. Optionally set `FB_REQUIRE_EVENT` to Facebook event id only allow users who have RSVP to that event to login.
-4. Test it out. Make sure the push server is running and accessible from the internet
+2. Edit config.php. Specify your given `FB_ID` and `FB_SECRET`. Optionally set `FB_REQUIRE_EVENT` to Facebook event id only allow users who have RSVP to that 
+event to login.
+3. Test it out. Make sure the push server is running and accessible from the internet
 
 ## Hosting stream
 
