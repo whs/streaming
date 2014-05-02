@@ -202,7 +202,7 @@ video{
 </div>
 </div>
 <div id="chatbox">
-<a class="user" target="_blank" href="http://menome.in.th/<?=$user->id?>"><img src="<?=$user->avatar?>"> <?=htmlspecialchars($user->name)?>:</a> <input type="text" name="chat" autofocus> 
+<a class="user" target="_blank" href="https://www.facebook.com/app_scoped_user_id/<?=$user->id?>/"><img src="<?=$user->avatar?>"> <?=htmlspecialchars($user->name)?>:</a> <input type="text" name="chat" autofocus> 
 	<button id="nicotoggle">Nicochat</button> <button id="oztoggle" style="color:red;">OZView</button>
 	<span id="lagmeter">(<span id="lagdata">lag <span id="lag"></span>ms </span>ping <span id="lp"></span>ms)</span>
 <ul id="chatmsg">

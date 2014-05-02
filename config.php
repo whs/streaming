@@ -1,8 +1,8 @@
 <?php
 session_start();
-define("API_HOST", "https://api.menome.in.th/");
-define("API_KEY", "");
-define("API_SECRET", "");
+define("FB_ID", "");
+define("FB_SECRET", "");
+define("FB_REQUIRE_EVENT", "");
 
 $chatserver = $_SERVER['SERVER_NAME'];
 define("CHAT_MASTER", "http://".$chatserver."/privpub/master");
