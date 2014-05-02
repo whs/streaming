@@ -20,33 +20,38 @@ In the same vhost that host the PHP pages, set
 ~~~~~~~
 location /privpub/master {
 	push_stream_publisher;
-	set $push_stream_channel_id             animestream_master;
+	push_stream_channels_path             animestream_master;
 	push_stream_store_messages on;
 }
 location /privpub/chat {
 	push_stream_publisher;
-	set $push_stream_channel_id             animestream_chat;
+	push_stream_channels_path             animestream_chat;
 }
 location /pub/online {
 	push_stream_publisher;
-	set $push_stream_channel_id             animestream_online;
+	push_stream_channels_path             animestream_online;
 }
 location ~ /sub/(.*) {
 	push_stream_subscriber;
-	set $push_stream_channels_path              $1;
+	push_stream_channels_path              $1;
 	push_stream_message_template                "{\"id\":~id~,\"channel\":\"~channel~\",\"text\":~text~}";
 	push_stream_ping_message_interval           10s;
 }
 location ~ /ev/(.*) {
-	push_stream_subscriber;
-	push_stream_eventsource_support on;
-	set $push_stream_channels_path              $1;
+	push_stream_subscriber eventsource;
+	push_stream_channels_path              $1;
 	push_stream_message_template                "{\"id\":~id~,\"channel\":\"~channel~\",\"text\":~text~}";
 	push_stream_ping_message_interval           10s;
 }
+location ~ /lp/(.*) {
+	push_stream_subscriber long-polling;
+	push_stream_channels_path              $1;
+	push_stream_message_template                "{\"id\":~id~,\"channel\":\"~channel~\",\"text\":~text~}";
+	push_stream_longpolling_connection_ttl	30s;
+}
 location ~ /ws/(.*) {
-	push_stream_websocket;
-	set $push_stream_channels_path              $1;
+	push_stream_subscriber websocket;
+	push_stream_channels_path              $1;
 	push_stream_message_template                "{\"id\":~id~,\"channel\":\"~channel~\",\"text\":~text~}";
 	push_stream_ping_message_interval           10s;
 }
