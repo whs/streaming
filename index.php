@@ -76,6 +76,7 @@ body{
 }
 #onlineuser{
 	width: 250px;
+	overflow-x: visible !important;
 }
 #chatmsg{
 	width: 720px;
@@ -93,6 +94,7 @@ body{
 .user{
 	display: block;
 	width: 140px;
+	height: 32px;
 	text-overflow:ellipsis;
 	overflow: hidden;
 	color: #eeee22;
@@ -100,6 +102,13 @@ body{
 	font-weight: bold;
 	white-space: nowrap;
 	float: left;
+}
+#onlineuser .user:hover{
+	text-overflow: clip;
+	white-space: normal;
+}
+#onlineuser .user:hover img{
+	width: 16px;
 }
 .meta{
 	color: #aaa;
@@ -134,6 +143,7 @@ button{
 video{
 	width: 100%;
 	height: 100%;
+	max-height: 480px;
 	display: block;
 }
 #lagmeter{
@@ -206,7 +216,7 @@ video{
 	<button id="nicotoggle">Nicochat</button> <button id="oztoggle" style="color:red;">OZView</button>
 	<span id="lagmeter">(<span id="lagdata">lag <span id="lag"></span>ms </span>ping <span id="lp"></span>ms)</span>
 <ul id="chatmsg">
-	<li id="announce">ฟหกดเสวง</li>
+	<li id="announce"></li>
 </ul>
 <ul id="onlineuser"></ul>
 <div style="clear: both;"></div>
@@ -269,8 +279,12 @@ function getBuffering(){
 		}
 	}else if($("#player video").length == 1){
 		var obj = $("#player video").get(0);
+		var loaded = 0;
 		try{
-			return obj.buffered.end(0)/obj.duration;
+			for(var i = 0; i < obj.buffered.length; i++){
+				loaded += obj.buffered.end(i) - obj.buffered.start(i)
+			}
+			return loaded/obj.duration;
 		}catch(e){return 0;}
 	}
 }
@@ -368,7 +382,7 @@ function online_packet(data){
 		ele.data("update", new Date().getTime());
 		<?php if($master): ?>
 		var lag = " ("+Math.floor(parseFloat(data.user.buffer)*100)+"%)";
-		ele.find(".user span").text(" "+data.user.name+lag);
+		ele.find(".user span").text(" "+data.user.name+lag).attr("title", data.user.name+lag);
 		<?php endif; ?>
 	}else{
 		ele = $("<li><a class='user' target='_blank'><span></span></a></li>");
@@ -376,7 +390,7 @@ function online_packet(data){
 		<?php if($master): ?>
 		lag = " ("+Math.floor(parseFloat(data.user.buffer)*100)+"%)";
 		<?php endif; ?>
-		ele.find(".user span").text(" "+data.user.name+lag);
+		ele.find(".user span").text(" "+data.user.name+lag).attr("title", data.user.name+lag);
 		$("<img>").attr("src", data.user.avatar).prependTo(ele.find(".user"));
 		ele.addClass("user_" + data.user.id).data("update", new Date().getTime());
 		ele.appendTo("#onlineuser");
