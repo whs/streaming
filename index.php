@@ -148,6 +148,11 @@ video{
 	padding: 8px;
 	display: none;
 }
+#menomeupdate{
+	background: #77ab29;
+	padding: 8px;
+	display: none;
+}
 #onlineuser li{
 	margin-bottom: 10px;
 }
@@ -191,6 +196,7 @@ video{
 	<button data-act="youtube">Open YouTube</button>
 	<button data-act="stream">Open stream</button>
 	<button data-act="announce">Set announce</button>
+	<button data-act="menome">menome update</button>
 </div>
 <?php endif; ?>
 <div id="playerbox">
@@ -207,6 +213,7 @@ video{
 	<span id="lagmeter">(<span id="lagdata">lag <span id="lag"></span>ms </span>ping <span id="lp"></span>ms)</span>
 <ul id="chatmsg">
 	<li id="announce">ฟหกดเสวง</li>
+	<li id="menomeupdate">ฟหกดเสวง</li>
 </ul>
 <ul id="onlineuser"></ul>
 <div style="clear: both;"></div>
@@ -383,6 +390,12 @@ function online_packet(data){
 	}
 }
 function master_packet(d){
+	if(d['type']){
+		if(d.type == 'menome'){
+
+		}
+		return;
+	}
 	lp = new Date().getTime()
 	clearTimeout(loadTimeout);
 	if(d.source.type != "youtube" && ytplayer){
@@ -549,6 +562,27 @@ $("button[data-act=announce]").click(function(){
 		announce = a;
 	}
 	sync();
+	return false;
+});
+$("button[data-act=menome]").click(function(){
+	var anime = prompt("Anime ID?");
+	if(!anime){
+		return;
+	}
+	var ep = prompt("Episode?");
+	if(!ep){
+		return;
+	}
+	$.ajax({
+		type: "POST",
+		url: "<?=CHAT_MASTER?>",
+		data: JSON.stringify({
+			type: 'menome',
+			anime: anime,
+			ep: ep
+		}),
+		contentType: "application/json"
+	});
 	return false;
 });
 /* endmaster */
