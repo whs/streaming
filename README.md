@@ -95,6 +95,10 @@ In clients, there're "lag" and "ping" meters. Lag show how much that client's vi
 
 A keyframe may contains a "force" flag. Forced keyframes appear when server have manually changed media. Clients encoutering force flag will try to reload the media.
 
+## License
+
+Licensed under [StealItPl 1.1](https://github.com/whs/whs.github.com/blob/master/LICENSE) or [AGPLv3](http://www.gnu.org/licenses/agpl.html). You can use this only for non commercial use with under 100 active users in a month and retain this license term in your derivatives or you can use it under the terms of AGPLv3.
+
 ## Acknowledgements
 
 - Flash video player from [Flash Media Playback](http://www.adobe.com/products/flashmediaplayback) (yeah, I should've used Strobe)
