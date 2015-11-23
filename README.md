@@ -12,6 +12,18 @@ This is a product of quick 'n dirty hack in two days plus few other patches. Don
 
 ## Installation
 
+### Docker setup
+
+Streamer now comes with Dockerfile. To install with Docker,
+
+```
+# (In project folder)
+docker build -t animestream .
+docker run -p 80:80 -e FB_ID=<FBID> -e FB_SECRET=<FBSECRET> animestream
+```
+
+Replace `<FBID>` and `<FBSECRET>` by Facebook App ID and secret respectively (read the app setup section on how to register). Add `-e FB_REQUIRE_EVENT=<ID>` to require visitors to join an event first. You can add `-v "<datafolder>:/var/www/html/data/:ro"` to mount a data folder (eg. video files) to serve at /data.
+
 ### nginx setup
 
 In the same vhost that host the PHP pages, set
