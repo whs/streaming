@@ -248,11 +248,12 @@ var user = <?php print json_encode(array(
 	"name" => $user->name,
 	"avatar" => $user->avatar
 )); ?>;
+var max_lag = 6000;
 
 // yt apis
 function onPlayerStateChange(e){
 	<?php if(!$master): ?>
-	e.target.seekTo(parseFloat(lastPacket.time), true);
+	// e.target.seekTo(parseFloat(lastPacket.time), true);
 	<?php else: ?>
 	sync();
 	<?php endif; ?>
@@ -458,7 +459,8 @@ function master_packet(d){
 	if(source.type == "file" || source.type == "youtube"){
 		var lag = Math.floor(parseFloat(d.time) * 1000 - getTime() * 1000);
 		$("#lag").text(lag);
-		if(reload || Math.abs(lag) > 6000){
+		if(reload || Math.abs(lag) > max_lag){
+			console.log("forced seeking. current lag is " + lag + " maximum accepted " + max_lag);
 			try{
 				if(source.type == "youtube"){
 					ytplayer.seekTo(parseFloat(d.time), true);
