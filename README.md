@@ -1,8 +1,6 @@
-# awkwin's Streamer 2.0
+# awkwin's Streamer 3.0
 
-This is streamer used to stream anime on [madoka.whs.in.th](http://madoka.whs.in.th/streaming/). It supports any video URL (even that hosted on other origin server) and Flash Live Streaming server (requires additional hackery)
-
-This is a product of quick 'n dirty hack in two days plus few other patches. Don't expect much from it.
+This is streamer used to stream anime on [madoka.whs.in.th](http://madoka.whs.in.th/streaming/). It use [videojs](https://videojs.com) as the backend.
 
 ## Dependencies
 
@@ -77,20 +75,19 @@ event to login.
 
 ## Hosting stream
 
-1. Go to `http://yoururl/path/to/streaming/?master=1`. If required, log in with menome and retry the URL.
-2. You'll see 4 buttons on top right, Open file, Open YouTube, Open stream and Set Announce.
+1. Go to `http://yoururl/path/to/streaming/?master=1`. If required, log in and retry the URL.
+2. You'll see 4 buttons on top right, Open file, Open YouTube and Set Announce.
 
 - Open file is to open video from arbitary URL. The video must be supported by client browsers' HTML5 video. MP4 usually works fine.
-- Open YouTube is to open YouTube video. This plugin is quite buggy at this time.
-- Open stream is to use the code in the script tag. The default is to receive stream from http://stream.whs.in.th/live/anime. This must be changed in code, not in run-time.
+- Open YouTube is to open YouTube video. **Known issue:** you cannot switch from YouTube back to file. ([videojs-youtube#347](https://github.com/eXon/videojs-youtube/issues/347))
 - Set Announce is to set chat's pinned message.
 
 ## Notes
 
 - No master authentication is performed. Do not attempt to use multiple masters.
-- If the master lags everyone loop. If a client lags, it skip.
-- If you pause the file player, clients will loop.
-- If you seek the file player, clients seek.
+- If the master lags everyone will loop. If a client lags, it will skip.
+- If master pause the file player, clients will pause and attempt to seek to the same frame.
+- If master seek the file player, clients will seek.
 - Client can click at the lag meter below the chat bar to seek to the current keyframe time. (Needs to wait until next keyframe arrived)
 
 ## Behind the scene
@@ -113,11 +110,10 @@ Licensed under [StealItPl 1.1](https://github.com/whs/whs.github.com/blob/master
 
 ## Acknowledgements
 
-- Flash video player from [Flash Media Playback](http://www.adobe.com/products/flashmediaplayback) (yeah, I should've used Strobe)
 - Chatbox suggestion from @WolfKungz
 - Nicochat inspiration from [Nico Nico Douga](http://nicovideo.jp)
 - Additional Nicochat testing from @zennnzonbolt @nonene_desu @WolfKungz
 - OZView inspiration from [Summer Wars](http://menome.in.th/anime/summerwars)
-- Code portions from [project menome](http://menome.in.th) and twitteroauth.php
+- Code portions from [project menome](http://menome.in.th) and [twitteroauth.php](https://github.com/abraham/twitteroauth)
 - The keyframe approach is inspired from [Synchtube](http://synchtube.com).
 - Anime streaming is inspired from [/r/clannaddiscussion](http://www.reddit.com/r/clannaddiscussion).
