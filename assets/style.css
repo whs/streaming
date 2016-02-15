@@ -1,0 +1,190 @@
+body{
+	background: black;
+	color: white;
+}
+#playerbox{
+	background: #111;
+	width: 852px;
+	height: 480px;
+	margin: auto;
+	text-align: center;
+	line-height: 426px;
+	font-family: monospace;
+	font-size: 12pt;
+	position: relative;
+	overflow: hidden;
+}
+#player{
+	width: 100%;
+	height: 100%;
+}
+#nicochatbox{
+	position: absolute;
+	top: 0.5em; left: 0;
+	line-height: 1em;
+	font-family: sans-serif;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+#nicochat{
+	width: 100%;
+	height: 100%;
+	position: relative;
+	text-shadow: black 0px 0px 5px;
+	font-size: 14pt;
+}
+.nico{
+	position: absolute;
+	left: 852px;
+	display: inline-block;
+	word-break: normal;
+	white-space: nowrap;
+	height: 1em;
+}
+#chatbox{
+	width: 1000px; margin: auto;
+	font-size: 10pt;
+	margin-top: 10px;
+}
+#chatbox ul{
+	height: 200px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	word-break: break-word;
+	padding: 0;
+	margin:0;
+	margin-bottom: 10px;
+	float: left;
+}
+#onlineuser{
+	width: 250px;
+	overflow-x: visible !important;
+}
+#chatmsg{
+	clear: both;
+	width: 720px;
+	margin-right: 30px !important;
+}
+#chatbox li{
+	list-style: none;
+	margin-bottom: 10px;
+}
+#chatbox img{
+	max-width: 32px;
+	max-height: 32px;
+	vertical-align: middle;
+}
+.user{
+	display: block;
+	width: 140px;
+	height: 32px;
+	text-overflow:ellipsis;
+	overflow: hidden;
+	color: #eeee22;
+	text-decoration: none;
+	font-weight: bold;
+	white-space: nowrap;
+	float: left;
+}
+#onlineuser .user:hover{
+	text-overflow: clip;
+	white-space: normal;
+}
+#onlineuser .user:hover img{
+	width: 16px;
+}
+.meta{
+	color: #aaa;
+	font-size: 8pt;
+	margin-left: 10px;
+}
+button{
+	background: #222;
+	margin-top: 2px;
+	font-family: verdana;
+	border: none;
+	color: #00ccff;
+}
+#chatbox input{
+	width: 650px;
+	border: none;
+	background: transparent;
+	border-bottom: #00ccff solid 2px;
+	color: white;
+}
+#chatbox input:focus{
+	outline: none;
+}
+.body{
+	padding-left: 140px;
+}
+.body:after{
+	display: block;
+	content: "";
+	clear: both;
+}
+video{
+	width: 100%;
+	height: 100%;
+	max-height: 480px;
+	display: block;
+}
+#lagmeter{
+	display: block;
+	color: #222;
+	margin-left: 10px;
+	cursor: pointer;
+	font-size: 8pt;
+}
+#announce{
+	background: #222;
+	padding: 8px;
+	display: none;
+}
+#onlineuser li{
+	margin-bottom: 10px;
+}
+#oz{
+	position: absolute;
+	top: 0; left: 0;
+	pointer-events: none;
+}
+.ozbox{
+	position: absolute;
+	padding: 30px 20px 30px 20px;
+	border-radius: 999px;
+	background: rgba(255,255,255,0.8);
+	border: rgba(255,255,255,0.95) solid 2px;
+	display: inline-block;
+	font-family: verdana, sans-serif;
+	-webkit-transform: rotateY(90deg);
+	-webkit-transition: -webkit-transform ease-in 250ms;
+	text-shadow: white 0px 0px 10px;
+	word-break: normal;
+	white-space: nowrap;
+	min-width: 60px;
+	text-align: center;
+	color: black;
+}
+#control{
+	display: none;
+}
+.master #control{
+	display: block;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 150px;
+	text-align: right;
+}
+
+.vjs-progress-control{
+	pointer-events: none;
+}
+.master .vjs-progress-control{
+	pointer-events: auto;
+}
+.vjs-tech{
+	pointer-events: none;
+}
