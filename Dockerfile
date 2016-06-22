@@ -2,12 +2,12 @@ FROM debian:jessie
 
 RUN echo "deb http://packages.dotdeb.org jessie all" > /etc/apt/sources.list.d/dotdeb.list \
 	&& apt-key adv --keyserver hkp://keys.gnupg.net --recv-keys 89DF5277 \
-	&& apt-get update && apt-get install -y ca-certificates nginx-extras php5-fpm php5-curl
- 	&& apt-get clean \
- 	&& rm -rf /var/lib/apt/lists/* \
+	&& apt-get update && apt-get install -y ca-certificates nginx-extras php5-fpm php5-curl \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* \
 	&& rm /var/www/html/* \
- 	&& ln -sf /dev/stdout /var/log/nginx/access.log \
- 	&& ln -sf /dev/stderr /var/log/nginx/error.log
+	&& ln -sf /dev/stdout /var/log/nginx/access.log \
+	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY . /var/www/html
 
