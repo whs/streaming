@@ -10,6 +10,8 @@ This is streamer used to stream anime on [madoka.whs.in.th](http://madoka.whs.in
 
 ## Installation
 
+Note: Due to changes to Facebook API, Facebook app MUST allow **user_events** scope request.
+
 ### Docker setup
 
 Streamer now comes with Dockerfile. To install with Docker,
@@ -69,7 +71,7 @@ location ~ /ws/(.*) {
 ### App setup
 
 1. Register a [Facebook app](http://developers.facebook.com). Set app domain to link of your site.
-2. Edit config.php. Specify your given `FB_ID` and `FB_SECRET`. Optionally set `FB_REQUIRE_EVENT` to Facebook event id only allow users who have RSVP to that 
+2. Edit config.php. Specify your given `FB_ID` and `FB_SECRET`. Optionally set `FB_REQUIRE_EVENT` to Facebook event id only allow users who have RSVP to that
 event to login.
 3. Test it out. Make sure the push server is running and accessible from the internet
 
