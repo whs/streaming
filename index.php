@@ -21,7 +21,7 @@ if($config['master']){
 <head>
 	<meta charset="UTF-8">
 	<title>Streaming</title>
-	<link rel="stylesheet" href="normalize.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css">
 	<link rel="stylesheet" href="assets/style.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.7.1/video-js.min.css">
 	<script src="PushStream.min.js"></script>
