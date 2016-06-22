@@ -8,7 +8,7 @@ if [ "$FB_ID" = "" ]; then
 fi
 if [ "$FB_SECRET" = "" ]; then
 	echo "Specify -e FB_SECRET=..."
-	 exit 1
+	exit 1
 fi
 
 echo "Starting server with options"
