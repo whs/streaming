@@ -9,7 +9,8 @@ set $_SESSION['user'] = (object) array(
 );
 */
 
-$redirect = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$protocol = $_SERVER['HTTPS'] ? 'https' : 'http';
+$redirect = $protocol."://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 header("Content-Type: text/plain; charset=UTF-8");
 
