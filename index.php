@@ -24,7 +24,7 @@ if($config['master']){
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css">
 	<link rel="stylesheet" href="assets/style.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.7.1/video-js.min.css">
-	<script src="PushStream.min.js"></script>
+	<script src="assets/PushStream.min.js"></script>
 </head>
 <body>
 <div id="control">
