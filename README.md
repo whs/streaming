@@ -10,8 +10,6 @@ This is streamer used to stream anime on [madoka.whs.in.th](http://madoka.whs.in
 
 ## Installation
 
-Note: Due to changes to Facebook API, Facebook app MUST allow **user_events** scope request.
-
 ### Docker setup
 
 Streamer now comes with Dockerfile. To install with Docker,
@@ -22,7 +20,7 @@ docker build -t animestream .
 docker run -p 80:80 -e FB_ID=<FBID> -e FB_SECRET=<FBSECRET> animestream
 ```
 
-Replace `<FBID>` and `<FBSECRET>` by Facebook App ID and secret respectively (read the app setup section on how to register). Add `-e FB_REQUIRE_EVENT=<ID>` to require visitors to join an event first. You can add `-v "<datafolder>:/var/www/html/data/:ro"` to mount a data folder (eg. video files) to serve at /data.
+Replace `<FBID>` and `<FBSECRET>` by Facebook App ID and secret respectively (read the app setup section on how to register). You can add `-v "<datafolder>:/var/www/html/data/:ro"` to mount a data folder (eg. video files) to serve at /data.
 
 ### nginx setup
 
@@ -71,8 +69,7 @@ location ~ /ws/(.*) {
 ### App setup
 
 1. Register a [Facebook app](http://developers.facebook.com). Set app domain to link of your site.
-2. Edit config.php. Specify your given `FB_ID` and `FB_SECRET`. Optionally set `FB_REQUIRE_EVENT` to Facebook event id only allow users who have RSVP to that
-event to login.
+2. Edit config.php. Specify your given `FB_ID` and `FB_SECRET`.
 3. Test it out. Make sure the push server is running and accessible from the internet
 
 ## Hosting stream

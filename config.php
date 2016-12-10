@@ -2,7 +2,6 @@
 session_start();
 define("FB_ID", "");
 define("FB_SECRET", "");
-define("FB_REQUIRE_EVENT", "");
 
 $chatserver = $_SERVER['HTTP_HOST'];
 define("CHAT_MASTER", "http://".$chatserver."/privpub/master");

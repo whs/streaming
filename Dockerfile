@@ -16,7 +16,7 @@ RUN mv /var/www/html/docker/nginx.conf /etc/nginx/nginx.conf \
 	&& chmod +x /run.sh \
 	&& mv /var/www/html/docker/config.php /var/www/html/config.php \
 	&& rm -r /var/www/html/docker /var/www/html/Dockerfile \
-	&& echo 'env[FB_ID] = $FB_ID\nenv[FB_SECRET] = $FB_SECRET\nenv[FB_REQUIRE_EVENT] = $FB_REQUIRE_EVENT' >> /etc/php5/fpm/pool.d/www.conf
+	&& echo 'env[FB_ID] = $FB_ID\nenv[FB_SECRET] = $FB_SECRET' >> /etc/php5/fpm/pool.d/www.conf
 
 EXPOSE 80
 CMD ["/bin/sh", "/run.sh"]
