@@ -15,12 +15,12 @@ This is streamer used to stream anime on [madoka.whs.in.th](http://madoka.whs.in
 Streamer now comes with Dockerfile. To install with Docker,
 
 ```
-# (In project folder)
-docker build -t animestream .
-docker run -p 80:80 -e FB_ID=<FBID> -e FB_SECRET=<FBSECRET> animestream
+docker run -p 80:80 -e FB_ID=<FBID> -e FB_SECRET=<FBSECRET> willwill/streaming
 ```
 
 Replace `<FBID>` and `<FBSECRET>` by Facebook App ID and secret respectively (read the app setup section on how to register). You can add `-v "<datafolder>:/var/www/html/data/:ro"` to mount a data folder (eg. video files) to serve at /data.
+
+Note that this will assume that you're running behind reverse proxy. You can use without one, but it is a security risk. Make sure your reverse proxy can forward websocket.
 
 ### nginx setup
 

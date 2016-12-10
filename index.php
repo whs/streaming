@@ -21,9 +21,9 @@ if($config['master']){
 <head>
 	<meta charset="UTF-8">
 	<title>Streaming</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.1.1/normalize.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
 	<link rel="stylesheet" href="assets/style.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.7.1/video-js.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.14.1/video-js.min.css">
 	<script src="assets/PushStream.min.js"></script>
 </head>
 <body>
@@ -52,9 +52,9 @@ if($config['master']){
 </div>
 <div id="oz"></div>
 <script>window.HELP_IMPROVE_VIDEOJS = false;window.config = <?php echo json_encode($config); ?>;</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.7.1/video.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.0.8/Youtube.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/5.14.1/video.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-youtube/2.1.1/Youtube.min.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>

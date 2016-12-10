@@ -4,9 +4,10 @@ define("FB_ID", $_SERVER['FB_ID']);
 define("FB_SECRET", $_SERVER['FB_SECRET']);
 
 $chatserver = $_SERVER['HTTP_HOST'];
-define("CHAT_MASTER", "http://".$chatserver."/privpub/master");
+$protocol = $_SERVER['HTTPS'] ? 'https' : 'http';
+define("CHAT_MASTER", $protocol."://".$chatserver."/privpub/master");
 define("CHAT_CHAT", "http://".$chatserver."/privpub/chat");
-define("CHAT_ONLINE", "http://".$chatserver."/pub/online");
+define("CHAT_ONLINE", $protocol."://".$chatserver."/pub/online");
 
 
 function ws_push($room, $data=array()){
