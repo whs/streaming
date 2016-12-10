@@ -6,7 +6,7 @@ define("FB_SECRET", $_SERVER['FB_SECRET']);
 $chatserver = $_SERVER['HTTP_HOST'];
 $protocol = $_SERVER['HTTPS'] ? 'https' : 'http';
 define("CHAT_MASTER", $protocol."://".$chatserver."/privpub/master");
-define("CHAT_CHAT", "http://".$chatserver."/privpub/chat");
+define("CHAT_CHAT", "http://localhost/privpub/chat");
 define("CHAT_ONLINE", $protocol."://".$chatserver."/pub/online");
 
 
