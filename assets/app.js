@@ -35,14 +35,15 @@ var Streaming = function(settings){
 		syncInterval: 3000,
 		maxLag: 3000,
 		maxLagPaused: 100,
-		minBuffered: 0.01,
 		pingTimerInterval: 500,
+		seekImmuneTime: 3000,
 	}, settings || {});
 
 	this.source = {};
 	this.announce = '';
 	this.bindEvents();
 	this.lastPacket = 0;
+	this.lastSeek = 0;
 
 	this.video = videojs('#player', this.settings.videojs).ready(() => {
 		this.chat = new Chat(this.video, this.settings.chat);
@@ -125,21 +126,22 @@ Streaming.prototype.onMasterPacket = function(data){
 		}else{
 			this.video.play();
 		}
-		if(this.video.bufferedPercent() > this.settings.minBuffered){
-			var lag = (data.time - this.video.currentTime()) * 1000;
-			if(
+		var buffered = this.video.bufferedPercent();
+		var lag = (data.time - this.video.currentTime()) * 1000;
+		if(
+			(new Date().getTime() - this.lastSeek > this.settings.seekImmuneTime) && 
+			(
 				this._forceSeek ||
 				(!data.pause && Math.abs(lag) > this.settings.maxLag) ||
 				(data.pause && Math.abs(lag) > this.settings.maxLagPaused)
-			){
-				console.log('too lag, seeking', lag);
-				this.video.currentTime(data.time);
-				this._forceSeek = false;
-			}
-			$('#lag').text(Math.ceil(lag));
-		}else{
-			$('#lag').text('???');
+			)
+		){
+			console.log('too lag, seeking', lag);
+			this.lastSeek = new Date().getTime();
+			this.video.currentTime(data.time);
+			this._forceSeek = false;
 		}
+		$('#lag').text(Math.ceil(lag));
 	}
 };
 
