@@ -66,6 +66,9 @@ html,body{
 	padding: 0;
 	margin:0;
 }
+#chatmsg .user{
+	float: left;
+}
 #chatbox li{
 	list-style: none;
 	margin-bottom: 10px;
