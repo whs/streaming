@@ -16,5 +16,6 @@ echo "FB_ID=$FB_ID"
 echo "FB_SECRET=$FB_SECRET"
 echo
 
-/usr/sbin/php5-fpm --fpm-config /etc/php5/fpm/php-fpm.conf
-exec /usr/sbin/nginx -g "daemon off;"
+php-fpm --fpm-config /usr/local/etc/php-fpm.conf
+chown www-data /var/run/php-fpm.sock
+exec nginx -g "daemon off;"
