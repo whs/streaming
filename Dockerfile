@@ -4,7 +4,7 @@ FROM alpine:3.6
 # so we merge everything into one image
 
 ENV NGINX_VERSION 1.13.3
-ENV PHP_VERSION 7.1.7
+ENV PHP_VERSION 7.1.8
 
 # Copied from nginx:alpine image
 
