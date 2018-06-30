@@ -1,10 +1,10 @@
-FROM alpine:3.6
+FROM alpine:3.7
 
 # We want people to install this easily by docker run
 # so we merge everything into one image
 
-ENV NGINX_VERSION 1.13.5
-ENV PHP_VERSION 7.1.9
+ENV NGINX_VERSION 1.15.0
+ENV PHP_VERSION 7.2.7
 
 # Copied from nginx:alpine image
 
